@@ -173,8 +173,8 @@ class Player {
   addCards(card) {
     this.cards.push(card);
   }
-  removeCards(card) {
-    this.cards.push(card);
+  removeCards(number) {
+    this.cards.slice(0, number);
   }
 
   displayPlayer() {
@@ -185,13 +185,13 @@ class Player {
 let player1 = new Player("Slim");
 let player2 = new Player("Luke");
 
-// Deal cards to player and display the rest------------------------------------------
-const dealCards = (deck, player) => {
+// Deal cards to player------------------------------------------
+const dealCards = (deck, player, numberCards) => {
   const dealed = deck
     .map((a) => ({ sort: Math.random(), value: a }))
     .sort((a, b) => a.sort - b.sort)
     .map((a) => a.value)
-    .slice(0, 5);
+    .slice(0, numberCards);
 
   dealed.forEach((card) => {
     player.addCards(card);
@@ -205,11 +205,11 @@ const dealCards = (deck, player) => {
   return newDeck;
 };
 
-const leftOfDeck = dealCards(myDeck.cards, player1);
+const leftOfDeck = dealCards(myDeck.cards, player1, 5);
 //console.log(player1);
 //console.log(leftOfDeck);
 
-const leftOfdealedTwo = dealCards(leftOfDeck, player2);
+const leftOfdealedTwo = dealCards(leftOfDeck, player2, 5);
 //console.log(player2);
 //console.log(leftOfdealedTwo);
 
@@ -227,48 +227,159 @@ const countCardsAmount = (player1, player2) => {
 
 //console.log(countCardsAmount(player1, player2));
 
-//Throw two cards, get two new ones----------------------------------------------------
-const playerHand = (player) => {
-  return (leftOfCards = player.cards.splice(0, 2));
+//Throw two cards----------------------------------------------------
+const playerHand = (hand, num) => {
+  return (leftOfCards = hand.splice(0, num));
 };
 
-const throwCardsPlayer1 = playerHand(player1);
-const throwCardsPlayer2 = playerHand(player2);
+const throwTwoCardsPlayer1 = playerHand(player1.cards, 2);
+const throwTwoCardsPlayer2 = playerHand(player2.cards, 2);
 //console.log(player1);
 //console.log(player2);
 
 //Deal two new cards----------------------------------------------------------
-const dealTwoNewCards = (deck, player) => {
-  const dealed = deck
-    .map((a) => ({ sort: Math.random(), value: a }))
-    .sort((a, b) => a.sort - b.sort)
-    .map((a) => a.value)
-    .slice(0, 2);
 
-  dealed.forEach((card) => {
-    player.addCards(card);
-  });
-
-  let newDeck = deck;
-
-  dealed.forEach((dealedCard) => {
-    newDeck = newDeck.filter((deckCard) => deckCard !== dealedCard);
-  });
-  return newDeck;
-};
-
-const twoNewCards1 = dealTwoNewCards(leftOfdealedTwo, player1);
+const deckTwoNewCards1 = dealCards(leftOfdealedTwo, player1, 2);
 //console.log(player1);
-//console.log(twoNewCards1);
+//console.log(deckTwoNewCards1);
 
-const twoNewCards2 = dealTwoNewCards(twoNewCards1, player2);
+const deckTwoNewCards2 = dealCards(deckTwoNewCards1, player2, 2);
 //console.log(player2);
-//console.log(twoNewCards2);
+//console.log(deckTwoNewCards2);
 
 //Total sum of all cards on hand - round two-------------------------------------------------
 //console.log(countCardsAmount(player1, player2));
 
 //Throw all cards------------------------------------------------------------------
+const throwAllCardsPlayer1 = [...player1.cards, ...deckTwoNewCards2];
+const throwAllCardsPlayer2 = [...player2.cards, ...throwAllCardsPlayer1];
+const completeDeck = [
+  ...throwAllCardsPlayer2,
+  ...throwTwoCardsPlayer2,
+  ...throwTwoCardsPlayer1,
+];
+
+//console.log(shuffle(completeDeck));
+const player1EmptyHand = playerHand(player1.cards, 5);
+const player2EmptyHand = playerHand(player2.cards, 5);
+//console.log(player1);
+//console.log(player2);
+
+// Dealer-------------------------------------------------------------------------
+class Dealer {
+  constructor(newdeck) {
+    this.newdeck = newdeck;
+  }
+}
+
+const myDealer = new Dealer(myDeck);
+//console.log(myDealer);
+const dealerShuffledDeck = shuffle(myDealer.newdeck.cards);
+//console.log(dealerShuffledDeck);
+
+const dealerDealCardsPlayer1 = dealCards(leftOfdealedTwo, player1, 5);
+//console.log(player1);
+const dealerDealCardsPlayer2 = dealCards(leftOfdealedTwo, player2, 5);
+//console.log(player2);
+
+// Validation med Static---------------------------------------------------------------------
+class Validation {
+  constructor() {
+    this.players = [];
+  }
+  newPlayer(player) {
+    this.players.push(player);
+  }
+
+  static checkValid(player) {
+    const handValue = player.reduce((acc, item) => acc + item.number, 0);
+    return handValue;
+  }
+}
+
+const validationList = new Validation();
+validationList.newPlayer(player1);
+validationList.newPlayer(player2);
+//console.log(validationList);
+/* console.log(
+  `Validation: Slim: ${Validation.checkValid(player1.cards)}`,
+  `Luke: ${Validation.checkValid(player2.cards)}`
+); */
+
+//--------------------------------------------------------------------------
+class Game {
+  constructor() {
+    this.players = [];
+    this.dealer = new Dealer(new Deck());
+  }
+
+  addPlayers() {
+    const numberOfPlayers = prompt("Ange antalet spelare:");
+    if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
+      console.log("Ogiltigt antal spelare. Minst två spelare.");
+    } else
+      for (let i = 1; i <= numberOfPlayers; i++) {
+        const playerName = prompt(`Ange namn för spelare ${i}:`);
+        let newPlayer = new Player(playerName);
+        this.addPlayer(newPlayer);
+      }
+  }
+
+  addPlayer(player) {
+    this.players.push(player);
+  }
+
+  startGame() {
+    this.addPlayers();
+    this.dealCards(myDeck.cards, players, 5);
+  }
+  // Deal cards to player------------------------------------------
+  dealCards(deck, player, numberCards) {
+    const dealed = deck
+      .map((a) => ({ sort: Math.random(), value: a }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((a) => a.value)
+      .slice(0, numberCards);
+
+    dealed.forEach((card) => {
+      player.addCards(card);
+    });
+
+    let newDeck = deck;
+
+    dealed.forEach((dealedCard) => {
+      newDeck = newDeck.filter((deckCard) => deckCard !== dealedCard);
+    });
+    return newDeck;
+  }
+
+  //-------------------------------------------------------------------------------
+
+  static checkValid(player) {
+    const handValue = player.reduce((acc, item) => acc + item.number, 0);
+    return handValue;
+  }
+}
+const newGame = new Game();
+newGame.startGame();
+console.log(newGame.players);
+
+//----------------------------------------------------------------------------
+//  function addPlayers() {
+//     const numberOfPlayers = prompt("Ange antalet spelare:");
+//     const players=[]
+//     if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
+//       console.log("Ogiltigt antal spelare. Minst två spelare.");
+//     } else
+//       for (let i = 1; i <= numberOfPlayers; i++) {
+//         const playerName = prompt(`Ange namn för spelare ${i}:`);
+//         players.push(playerName);
+//       }
+//     return (players)
+//   }
+
+// let a = addPlayers()
+// console.log(a);
 
 //---------------------------------------------------------------------
 
