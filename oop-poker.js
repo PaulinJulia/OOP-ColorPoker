@@ -307,14 +307,15 @@ validationList.newPlayer(player2);
 ); */
 
 //--------------------------------------------------------------------------
+
 class Game {
   constructor() {
     this.players = [];
-    this.dealer = new Dealer(new Deck());
+    this.dealer = myDeck;
   }
 
   addPlayers() {
-    const numberOfPlayers = prompt("Ange antalet spelare:");
+    const numberOfPlayers = parseInt(prompt("Ange antalet spelare:", 2));
     if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
       console.log("Ogiltigt antal spelare. Minst två spelare.");
     } else
@@ -331,103 +332,21 @@ class Game {
 
   startGame() {
     this.addPlayers();
-    this.dealCards(myDeck.cards, players, 5);
-  }
-  // Deal cards to player------------------------------------------
-  dealCards(deck, player, numberCards) {
-    const dealed = deck
-      .map((a) => ({ sort: Math.random(), value: a }))
-      .sort((a, b) => a.sort - b.sort)
-      .map((a) => a.value)
-      .slice(0, numberCards);
-
-    dealed.forEach((card) => {
-      player.addCards(card);
-    });
-
-    let newDeck = deck;
-
-    dealed.forEach((dealedCard) => {
-      newDeck = newDeck.filter((deckCard) => deckCard !== dealedCard);
-    });
-    return newDeck;
-  }
-
-  //-------------------------------------------------------------------------------
-
-  static checkValid(player) {
-    const handValue = player.reduce((acc, item) => acc + item.number, 0);
-    return handValue;
-  }
-}
-const newGame = new Game();
-newGame.startGame();
-console.log(newGame.players);
-
-//----------------------------------------------------------------------------
-//  function addPlayers() {
-//     const numberOfPlayers = prompt("Ange antalet spelare:");
-//     const players=[]
-//     if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
-//       console.log("Ogiltigt antal spelare. Minst två spelare.");
-//     } else
-//       for (let i = 1; i <= numberOfPlayers; i++) {
-//         const playerName = prompt(`Ange namn för spelare ${i}:`);
-//         players.push(playerName);
-//       }
-//     return (players)
-//   }
-
-// let a = addPlayers()
-// console.log(a);
-
-//---------------------------------------------------------------------
-
-/* const SUITS = ["spades", "hearts", "diamond", "club"];
-const VALUES = [
-  "A",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "J",
-  "Q",
-  "K",
-];
-
-class Deck {
-  constructor(cards = freshDeck()) {
-    this.cards = cards;
-  }
-  shuffle(){
-    for (let i = this.cards.length -1; i > 0; i--) {
-        const newIndex = Math.floor(Math.random() * (i + 1))
-        const oldValue = this.cards[newIndex]
-        this.cards[newIndex] = this.cards[i]
-        this.cards[i] = oldValue
+    for (let i = 0; i < this.players.length; i++) {
+      dealCards(this.dealer.cards, this.players[i], 5);
+    }
+    for (let i = 0; i < this.players.length; i++) {
+      console.log(
+        `Validation: ${this.players[i].name} ${Validation.checkValid(
+          this.players[i].cards
+        )}`
+      );
     }
   }
 }
-class Card {
-  constructor(suit, value) {
-    this.suit = suit;
-    this.value = value;
-  }
-}
 
-function freshDeck() {
-  return SUITS.flatMap((suit) => {
-    return VALUES.map((value) => {
-      return new Card(suit, value);
-    });
-  });
-}
+const newGame = new Game();
+newGame.startGame();
+//console.log(newGame);
 
-const deck = new Deck();
-deck.shuffle()
-console.log(deck); */
+//SKRIV UT VINNARE
