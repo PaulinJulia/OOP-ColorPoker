@@ -169,12 +169,16 @@ class Player {
     this.cards = [];
   }
   //Methods
-
   addCards(card) {
     this.cards.push(card);
   }
-  removeCards(number) {
-    this.cards.slice(0, number);
+  removeCardAtIndex(index) {
+    if (index >= 0 && index < this.cards.length) {
+      this.cards.splice(index, 1);
+      console.log(`Kort borttaget från index ${index}`);
+    } else {
+      console.log(`Ogiltig indexplats: ${index}`);
+    }
   }
 
   displayPlayer() {
@@ -308,7 +312,7 @@ validationList.newPlayer(player2);
 
 //--------------------------------------------------------------------------
 
-class Game {
+/* class Game {
   constructor() {
     this.players = [];
     this.dealer = myDeck;
@@ -332,21 +336,110 @@ class Game {
 
   startGame() {
     this.addPlayers();
+    let updatedDeck = this.dealer.cards;
     for (let i = 0; i < this.players.length; i++) {
-      dealCards(this.dealer.cards, this.players[i], 5);
+      updatedDeck = dealCards(updatedDeck, this.players[i], 5);
+      console.log(updatedDeck);
     }
+
+    const allValidations = [];
+    let currentLeader = 10000;
+    let leaderSum = 0;
     for (let i = 0; i < this.players.length; i++) {
-      console.log(
-        `Validation: ${this.players[i].name} ${Validation.checkValid(
-          this.players[i].cards
-        )}`
-      );
+      allValidations.push(Validation.checkValid(this.players[i].cards));
+      if (allValidations[i] > leaderSum) {
+        currentLeader = i;
+        leaderSum = allValidations[i];
+      }
+      console.log(allValidations[i]);
+      console.log(`Validation: ${this.players[i].name} ${allValidations[i]}`);
     }
+    console.log(`Winner is: ${this.players[currentLeader].name} ${leaderSum}`);
+  }
+}
+
+const newGame = new Game();
+newGame.startGame(); */
+
+//--------------------------------------------------------------------------
+
+class Game {
+  constructor() {
+    this.players = [];
+    this.dealer = myDeck;
+  }
+
+  addPlayers() {
+    const numberOfPlayers = parseInt(prompt("Ange antalet spelare:", 2));
+    if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
+      console.log("Ogiltigt antal spelare. Minst två spelare.");
+    } else
+      for (let i = 1; i <= numberOfPlayers; i++) {
+        const playerName = prompt(`Ange namn för spelare ${i}:`);
+        let newPlayer = new Player(playerName);
+        this.addPlayer(newPlayer);
+      }
+  }
+
+  addPlayer(player) {
+    this.players.push(player);
+  }
+
+  startGame() {
+    const ul = document.querySelector(".cards");
+    this.addPlayers();
+    let updatedDeck = this.dealer.cards;
+    for (let i = 0; i < this.players.length; i++) {
+      updatedDeck = dealCards(updatedDeck, this.players[i], 5);
+      //console.log(updatedDeck);
+      // console.log(this.players[i]);
+      const html = this.players
+        .map(
+          (item, index) =>
+            `<li id="player" player-index="${index}">PLAYER: ${
+              item.name
+            } ${item.cards
+              .map(
+                (item, index) =>
+                  `<li id="remove-card" card-index="${index}">${item.name} ${item.color} ${item.number}</li>`
+              )
+              .join(" ")}</li>`
+        )
+        .join("");
+      ul.innerHTML = html;
+      console.log(this.players[i]);
+    }
+    ul.addEventListener("click", (event) => {
+      if (event.target.id === "player") {
+        const playerIndex = event.target.getAttribute("player-index");
+        console.log(playerIndex);
+        this.players[playerIndex].removeCardAtIndex();
+      }
+    });
+
+    /*     ul.addEventListener("click", (event) => {
+      if (event.target.id === "remove-card") {
+        const cardIndex = event.target.getAttribute("card-index");
+        this.players[playerIndex].removeCardAtIndex(cardIndex);
+        console.log(this.players[playerIndex]);
+      }
+    }); */
+
+    const allValidations = [];
+    let currentLeader = 10000;
+    let leaderSum = 0;
+    for (let i = 0; i < this.players.length; i++) {
+      allValidations.push(Validation.checkValid(this.players[i].cards));
+      if (allValidations[i] > leaderSum) {
+        currentLeader = i;
+        leaderSum = allValidations[i];
+      }
+      console.log(allValidations[i]);
+      console.log(`Validation: ${this.players[i].name} ${allValidations[i]}`);
+    }
+    console.log(`Winner is: ${this.players[currentLeader].name} ${leaderSum}`);
   }
 }
 
 const newGame = new Game();
 newGame.startGame();
-//console.log(newGame);
-
-//SKRIV UT VINNARE
