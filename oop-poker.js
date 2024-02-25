@@ -312,57 +312,6 @@ validationList.newPlayer(player2);
 
 //--------------------------------------------------------------------------
 
-/* class Game {
-  constructor() {
-    this.players = [];
-    this.dealer = myDeck;
-  }
-
-  addPlayers() {
-    const numberOfPlayers = parseInt(prompt("Ange antalet spelare:", 2));
-    if (isNaN(numberOfPlayers) || numberOfPlayers < 2) {
-      console.log("Ogiltigt antal spelare. Minst två spelare.");
-    } else
-      for (let i = 1; i <= numberOfPlayers; i++) {
-        const playerName = prompt(`Ange namn för spelare ${i}:`);
-        let newPlayer = new Player(playerName);
-        this.addPlayer(newPlayer);
-      }
-  }
-
-  addPlayer(player) {
-    this.players.push(player);
-  }
-
-  startGame() {
-    this.addPlayers();
-    let updatedDeck = this.dealer.cards;
-    for (let i = 0; i < this.players.length; i++) {
-      updatedDeck = dealCards(updatedDeck, this.players[i], 5);
-      console.log(updatedDeck);
-    }
-
-    const allValidations = [];
-    let currentLeader = 10000;
-    let leaderSum = 0;
-    for (let i = 0; i < this.players.length; i++) {
-      allValidations.push(Validation.checkValid(this.players[i].cards));
-      if (allValidations[i] > leaderSum) {
-        currentLeader = i;
-        leaderSum = allValidations[i];
-      }
-      console.log(allValidations[i]);
-      console.log(`Validation: ${this.players[i].name} ${allValidations[i]}`);
-    }
-    console.log(`Winner is: ${this.players[currentLeader].name} ${leaderSum}`);
-  }
-}
-
-const newGame = new Game();
-newGame.startGame(); */
-
-//--------------------------------------------------------------------------
-
 class Game {
   constructor() {
     this.players = [];
@@ -386,7 +335,7 @@ class Game {
   }
 
   startGame() {
-    const ul = document.querySelector(".cards");
+    //const ul = document.querySelector(".cards");
     const numberOfRounds = parseInt(
       prompt("Hur många rundor vill du spela?", 2)
     );
@@ -396,43 +345,44 @@ class Game {
       this.addPlayers();
       let updatedDeck = this.dealer.cards;
       for (let i = 0; i < this.players.length; i++) {
-        console.log(this.players.length);
         updatedDeck = dealCards(updatedDeck, this.players[i], 5);
         //console.log(updatedDeck);
-        // console.log(this.players[i]);
-        const html = this.players
-          .map(
-            (item, index) =>
-              `<li id="player" player-index="${index}">PLAYER: ${
-                item.name
-              } ${item.cards
-                .map(
-                  (item, index) =>
-                    `<li id="remove-card" card-index="${index}">${item.name} ${item.color} ${item.number}</li>`
-                )
-                .join(" ")}</li>`
-          )
-          .join("");
-        ul.innerHTML = html;
+        // const html = this.players
+        //   .map(
+        //     (item, index) =>
+        //       `<li id="player" player-index="${index}">PLAYER: ${
+        //         item.name
+        //       } ${item.cards
+        //         .map(
+        //           (item, index) =>
+        //             `<li id="remove-card" card-index="${index}">${item.name} ${item.color} ${item.number}</li>`
+        //         )
+        //         .join(" ")}</li>`
+        //   )
+        //   .join("");
+        // ul.innerHTML = html;
         console.log(this.players[i]);
       }
-      ul.addEventListener("click", (event) => {
-        if (event.target.id === "player") {
-          const playerIndex = event.target.getAttribute("player-index");
-          console.log(
-            `Klickat på spelare ${playerIndex} under runda ${round + 1}`
-          );
-          this.players[playerIndex].removeCardAtIndex();
-        }
-      });
 
-      /*     ul.addEventListener("click", (event) => {
-      if (event.target.id === "remove-card") {
-        const cardIndex = event.target.getAttribute("card-index");
-        console.log(`Klickat på kort ${cardIndex} för spelare ${playerIndex} under runda ${round + 1}`);
-        this.players[playerIndex].removeCardAtIndex(cardIndex);
-      }
-    }); */
+      // ul.addEventListener("click", (event) => {
+      //   if (event.target.id === "player") {
+      //     const playerIndex = event.target.getAttribute("player-index");
+      //     console.log(`Klickat på spelare ${playerIndex} under runda ${j + 1}`);
+      //     return playerIndex;
+      //   }
+      // });
+
+      // ul.addEventListener("click", (event) => {
+      //   if (event.target.id === "remove-card") {
+      //     const cardIndex = event.target.getAttribute("card-index");
+      //     console.log(
+      //       `Klickat på kort ${cardIndex} för spelare ${playerIndex} under runda ${
+      //         j + 1
+      //       }`
+      //     );
+      //     this.players[playerIndex].removeCardAtIndex(cardIndex);
+      //   }
+      // });
 
       const allValidations = [];
       let currentLeader = 10000;
@@ -443,7 +393,6 @@ class Game {
           currentLeader = i;
           leaderSum = allValidations[i];
         }
-        console.log(allValidations[i]);
         console.log(`Validation: ${this.players[i].name} ${allValidations[i]}`);
       }
       console.log(
