@@ -388,13 +388,15 @@ class Game {
   startGame() {
     const ul = document.querySelector(".cards");
     const numberOfRounds = parseInt(
-      prompt("Hur många rundor du vill spela:", 2)
+      prompt("Hur många rundor vill du spela?", 2)
     );
-    for (let i = 0; i < numberOfRounds; i++) {
-      console.log(`Runda ${i + 1}`);
+
+    for (let j = 0; j < numberOfRounds; j++) {
+      console.log(`Runda ${j + 1}`);
       this.addPlayers();
       let updatedDeck = this.dealer.cards;
       for (let i = 0; i < this.players.length; i++) {
+        console.log(this.players.length);
         updatedDeck = dealCards(updatedDeck, this.players[i], 5);
         //console.log(updatedDeck);
         // console.log(this.players[i]);
@@ -447,6 +449,7 @@ class Game {
       console.log(
         `Winner is: ${this.players[currentLeader].name} ${leaderSum}`
       );
+      this.players.splice(0, this.players.length);
     }
   }
 }
